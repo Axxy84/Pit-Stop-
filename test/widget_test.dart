@@ -11,20 +11,47 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pit_stop/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Pit Stop app smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const PitStopApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that the app title is displayed.
+    expect(find.text('🍕 Pit Stop Pizzaria'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Verify that the dashboard is displayed.
+    expect(find.text('Dashboard Operacional'), findsOneWidget);
+
+    // Verify that the navigation bar is present.
+    expect(find.byType(NavigationBar), findsOneWidget);
+
+    // Verify that the floating action button is present.
+    expect(find.byType(FloatingActionButton), findsOneWidget);
+    expect(find.text('Novo Pedido'), findsOneWidget);
+  });
+
+  testWidgets('Navigation between tabs test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const PitStopApp());
+
+    // Tap on "Pedidos" tab.
+    await tester.tap(find.text('Pedidos'));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that we're on the orders page.
+    expect(find.text('Gestão de Pedidos'), findsOneWidget);
+
+    // Tap on "Produtos" tab.
+    await tester.tap(find.text('Produtos'));
+    await tester.pump();
+
+    // Verify that we're on the products page.
+    expect(find.text('Gestão de Produtos'), findsOneWidget);
+
+    // Tap on "Config" tab.
+    await tester.tap(find.text('Config'));
+    await tester.pump();
+
+    // Verify that we're on the settings page.
+    expect(find.text('Configurações'), findsOneWidget);
   });
 }

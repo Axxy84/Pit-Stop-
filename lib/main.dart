@@ -1,122 +1,232 @@
 import 'package:flutter/material.dart';
+import 'shared/theme/app_theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const PitStopApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PitStopApp extends StatelessWidget {
+  const PitStopApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Pit Stop Pizzaria',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      home: const DashboardPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _DashboardPageState extends State<DashboardPage> {
+  int _selectedIndex = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  final List<Widget> _pages = [
+    const DashboardView(),
+    const OrdersView(),
+    const ProductsView(),
+    const SettingsView(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('🍕 Pit Stop Pizzaria'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.account_circle_outlined),
+            onPressed: () {},
+          ),
+        ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.shopping_cart_outlined),
+            selectedIcon: Icon(Icons.shopping_cart),
+            label: 'Pedidos',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.local_pizza_outlined),
+            selectedIcon: Icon(Icons.local_pizza),
+            label: 'Produtos',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: 'Config',
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        icon: const Icon(Icons.add_shopping_cart),
+        label: const Text('Novo Pedido'),
+      ),
+    );
+  }
+}
+
+class DashboardView extends StatelessWidget {
+  const DashboardView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Dashboard Operacional',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryRed,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              children: [
+                _MetricCard(
+                  title: 'Pedidos Hoje',
+                  value: '25',
+                  icon: Icons.shopping_cart,
+                  color: AppTheme.primaryRed,
+                ),
+                _MetricCard(
+                  title: 'Faturamento',
+                  value: 'R\$ 1.250,00',
+                  icon: Icons.attach_money,
+                  color: AppTheme.gold,
+                ),
+                _MetricCard(
+                  title: 'Em Preparo',
+                  value: '8',
+                  icon: Icons.restaurant,
+                  color: AppTheme.warning,
+                ),
+                _MetricCard(
+                  title: 'Para Entrega',
+                  value: '3',
+                  icon: Icons.delivery_dining,
+                  color: AppTheme.info,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetricCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _MetricCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
+          children: [
+            Icon(
+              icon,
+              size: 32,
+              color: color,
+            ),
+            const SizedBox(height: 8),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              value,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class OrdersView extends StatelessWidget {
+  const OrdersView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Gestão de Pedidos'),
+    );
+  }
+}
+
+class ProductsView extends StatelessWidget {
+  const ProductsView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Gestão de Produtos'),
+    );
+  }
+}
+
+class SettingsView extends StatelessWidget {
+  const SettingsView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Configurações'),
     );
   }
 }
