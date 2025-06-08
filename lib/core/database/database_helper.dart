@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
+import 'database_initializer.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -18,6 +19,9 @@ class DatabaseHelper {
   static const int _databaseVersion = 1;
 
   Future<Database> get database async {
+    // Ensure database is initialized for desktop
+    await DatabaseInitializer.initialize();
+    
     _database ??= await _initDatabase();
     return _database!;
   }
