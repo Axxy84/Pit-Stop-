@@ -6,6 +6,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Pit Stop** é um ecossistema completo de gestão de pizzaria desenvolvido em Flutter, seguindo Clean Architecture com Riverpod para gerenciamento de estado e SQLite como banco de dados local.
 
+## Current Implementation Status (v2.0.0-database)
+
+### ✅ Completed Features
+1. **SQLite Database**: Full implementation with 7 tables
+2. **Clean Architecture**: Complete structure with domain/data/presentation layers
+3. **Authentication System**: Login page with SHA256 encryption
+4. **Entities & Models**: All 7 core entities implemented
+5. **Repositories**: Auth, Client, Product, Order repositories
+6. **Riverpod Providers**: State management configured
+7. **Error Handling**: Custom exceptions for all scenarios
+8. **Database Seeds**: Initial data for testing
+
+### 🚧 Next Implementation Phase
+1. **Dashboard**: Operational metrics and KPIs
+2. **Product CRUD**: Complete product management
+3. **Order System**: Order creation and tracking
+4. **Client Management**: Search and registration
+5. **Delivery Control**: Deliverer assignment
+6. **Cash Closing**: Daily financial reports
+
 ### Escopo do Sistema
 - **App Principal (Desktop/Tablet)**: Sistema completo de gestão interna
 - **App Entregador (Mobile)**: Recebimento e gestão de entregas  
@@ -129,3 +149,21 @@ flutter build windows --release
 - Uma data por fechamento de caixa
 - Preços por tamanho (pizzas) vs preço fixo (outros)
 - Total do pedido = soma dos subtotais dos itens
+
+## Database Implementation Details (v2.0.0)
+
+### Database Structure
+- **7 Tables**: users, clients, products, orders, order_items, deliverers, cash_closings
+- **Foreign Keys**: Enabled with CASCADE delete on order_items
+- **Indexes**: Optimized for phone, status, date searches
+- **Constraints**: UNIQUE on phones, CHECK on status/payment methods
+
+### Available Users
+- **admin / admin123** - Administrator role
+- **operador / op123** - Operator role
+
+### Key Files Created
+- `lib/core/database/database_helper.dart` - Main database singleton
+- `lib/core/database/database_initializer.dart` - Desktop FFI support
+- `lib/features/auth/presentation/pages/login_page.dart` - Login UI
+- All entities, models, repositories in respective feature folders
