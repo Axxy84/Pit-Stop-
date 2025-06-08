@@ -7,51 +7,49 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:pit_stop/main.dart';
 
 void main() {
   testWidgets('Pit Stop app smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const PitStopApp());
+    await tester.pumpWidget(const ProviderScope(child: PitStopApp()));
 
     // Verify that the app title is displayed.
-    expect(find.text('🍕 Pit Stop Pizzaria'), findsOneWidget);
+    expect(find.text('PIT STOP PIZZARIA'), findsOneWidget);
 
-    // Verify that the dashboard is displayed.
-    expect(find.text('Dashboard Operacional'), findsOneWidget);
+    // Verify that the main message is displayed.
+    expect(find.text('Sistema funcionando!'), findsOneWidget);
 
-    // Verify that the navigation bar is present.
-    expect(find.byType(NavigationBar), findsOneWidget);
+    // Verify that the subtitle is displayed.
+    expect(find.text('Gestão de Pizzaria Profissional'), findsOneWidget);
 
     // Verify that the floating action button is present.
     expect(find.byType(FloatingActionButton), findsOneWidget);
     expect(find.text('Novo Pedido'), findsOneWidget);
+
+    // Verify that buttons are present.
+    expect(find.text('Acessar Dashboard'), findsOneWidget);
+    expect(find.text('Configurações'), findsOneWidget);
   });
 
-  testWidgets('Navigation between tabs test', (WidgetTester tester) async {
+  testWidgets('Button interaction test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const PitStopApp());
+    await tester.pumpWidget(const ProviderScope(child: PitStopApp()));
 
-    // Tap on "Pedidos" tab.
-    await tester.tap(find.text('Pedidos'));
+    // Tap on "Acessar Dashboard" button.
+    await tester.tap(find.text('Acessar Dashboard'));
     await tester.pump();
 
-    // Verify that we're on the orders page.
-    expect(find.text('Gestão de Pedidos'), findsOneWidget);
-
-    // Tap on "Produtos" tab.
-    await tester.tap(find.text('Produtos'));
+    // Tap on "Configurações" button.
+    await tester.tap(find.text('Configurações'));
     await tester.pump();
 
-    // Verify that we're on the products page.
-    expect(find.text('Gestão de Produtos'), findsOneWidget);
-
-    // Tap on "Config" tab.
-    await tester.tap(find.text('Config'));
+    // Tap on floating action button.
+    await tester.tap(find.byType(FloatingActionButton));
     await tester.pump();
 
-    // Verify that we're on the settings page.
-    expect(find.text('Configurações'), findsOneWidget);
+    // All taps should complete without errors
   });
 }

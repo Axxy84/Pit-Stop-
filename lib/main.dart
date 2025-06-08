@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'shared/theme/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const PitStopApp());
+  runApp(const ProviderScope(child: PitStopApp()));
 }
 
 class PitStopApp extends StatelessWidget {
@@ -13,220 +13,108 @@ class PitStopApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pit Stop Pizzaria',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      home: const DashboardPage(),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFE31E24),
+          brightness: Brightness.light,
+        ),
+      ),
+      home: const HomePage(),
     );
   }
 }
 
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
-
-  @override
-  State<DashboardPage> createState() => _DashboardPageState();
-}
-
-class _DashboardPageState extends State<DashboardPage> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    const DashboardView(),
-    const OrdersView(),
-    const ProductsView(),
-    const SettingsView(),
-  ];
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🍕 Pit Stop Pizzaria'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
+        backgroundColor: Colors.red[700],
+        title: const Text(
+          'PIT STOP PIZZARIA',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Poppins',
           ),
-          IconButton(
-            icon: const Icon(Icons.account_circle_outlined),
-            onPressed: () {},
+        ),
+        centerTitle: true,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () => Scaffold.of(context).openDrawer(),
           ),
-        ],
+        ),
       ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.shopping_cart_outlined),
-            selectedIcon: Icon(Icons.shopping_cart),
-            label: 'Pedidos',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.local_pizza_outlined),
-            selectedIcon: Icon(Icons.local_pizza),
-            label: 'Produtos',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: 'Config',
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        icon: const Icon(Icons.add_shopping_cart),
-        label: const Text('Novo Pedido'),
-      ),
-    );
-  }
-}
-
-class DashboardView extends StatelessWidget {
-  const DashboardView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Dashboard Operacional',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppTheme.primaryRed,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              children: [
-                _MetricCard(
-                  title: 'Pedidos Hoje',
-                  value: '25',
-                  icon: Icons.shopping_cart,
-                  color: AppTheme.primaryRed,
+      drawer: Drawer(
+        width: 250,
+        child: Container(
+          color: const Color(0xFF212121),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD32F2F),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                _MetricCard(
-                  title: 'Faturamento',
-                  value: 'R\$ 1.250,00',
-                  icon: Icons.attach_money,
-                  color: AppTheme.gold,
+                child: const Text(
+                  'PIT STOP\nPIZZARIA',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Poppins',
+                  ),
                 ),
-                _MetricCard(
-                  title: 'Em Preparo',
-                  value: '8',
-                  icon: Icons.restaurant,
-                  color: AppTheme.warning,
-                ),
-                _MetricCard(
-                  title: 'Para Entrega',
-                  value: '3',
-                  icon: Icons.delivery_dining,
-                  color: AppTheme.info,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MetricCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
-  final Color color;
-
-  const _MetricCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 32,
-              color: color,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
               ),
+              _buildMenuItem(Icons.dashboard, 'Dashboard', () {}),
+              _buildMenuItem(Icons.add_shopping_cart, 'Novo Pedido', () {}),
+              _buildMenuItem(Icons.list_alt, 'Pedidos', () {}),
+              _buildMenuItem(Icons.restaurant_menu, 'Produtos', () {}),
+              _buildMenuItem(Icons.people, 'Clientes', () {}),
+              _buildMenuItem(Icons.delivery_dining, 'Entregadores', () {}),
+              _buildMenuItem(Icons.settings, 'Configurações', () {}),
+              _buildMenuItem(Icons.attach_money, 'Fechamento Caixa', () {}),
+            ],
+          ),
+        ),
+      ),
+      body: const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Text(
+            'Selecione uma opção no menu lateral',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey,
             ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
-}
 
-class OrdersView extends StatelessWidget {
-  const OrdersView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Gestão de Pedidos'),
-    );
-  }
-}
-
-class ProductsView extends StatelessWidget {
-  const ProductsView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Gestão de Produtos'),
-    );
-  }
-}
-
-class SettingsView extends StatelessWidget {
-  const SettingsView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Configurações'),
+  Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: Colors.white,
+        size: 24,
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+        ),
+      ),
+      onTap: onTap,
+      hoverColor: const Color(0xFFD32F2F).withValues(alpha: 0.1),
     );
   }
 }
